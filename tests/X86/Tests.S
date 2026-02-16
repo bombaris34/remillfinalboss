@@ -254,6 +254,10 @@ SYMBOL(DoInvokeTestCase):
 # include "generated/Arch/X86/SaveState.S"
 # undef STATE_PTR
 
+    /* Reset FPU to a known state right before entering the test, since
+     * SaveState.S may have dirtied FPU state. */
+    fninit
+
     jmp QWORD PTR DS:[RIP + SYMBOL(gTestToRun)]
     .cfi_endproc
 
