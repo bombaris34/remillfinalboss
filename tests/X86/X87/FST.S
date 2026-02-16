@@ -80,7 +80,6 @@ TEST_END_64
 
 TEST_BEGIN_64(FSTPm80, 1)
 TEST_INPUTS(0x0123456789ABCDEF)
-    fninit
     sub rsp, 16
     mov QWORD PTR [rsp], ARG1_64
     mov WORD PTR [rsp + 8], 0x1337
