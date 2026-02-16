@@ -34,10 +34,10 @@
 #else
 # define IF_NOT_APPLE_(...) __VA_ARGS__ ,
 #endif
-        
+
 #define FUNC_NAME(instr_name, num_args) \
     CAT3(instr_name, _, num_args)
-        
+
 /* Defines the beginning of a test function. The key detail is that tests
  * register themselves into data structures located in a special section of
  * the binary.
@@ -349,6 +349,7 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/DATAXFER/MOVLPS.S"
 #include "tests/X86/DATAXFER/MOVLHPS.S"
 #include "tests/X86/DATAXFER/MOVMSKPS.S"
+#include "tests/X86/DATAXFER/MOVMSKPD.S"
 #include "tests/X86/DATAXFER/MOVQ.S"
 #include "tests/X86/DATAXFER/MOVSD.S"
 #include "tests/X86/DATAXFER/MOVSS.S"

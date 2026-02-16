@@ -94,6 +94,17 @@ DEF_SEM(MOVMSKPS, D dst, S src) {
   return memory;
 }
 
+// MOVMSKPD: extract sign bits (bit 63) of 2 packed doubles into GPR32
+template <typename D, typename S>
+DEF_SEM(MOVMSKPD, D dst, S src) {
+  auto src_vec = UReadV64(src);
+  auto s0 = UExtractV64(src_vec, 0);
+  auto s1 = UExtractV64(src_vec, 1);
+  auto r32 = Trunc(UOr(UShr(s0, 63_u64), UShl(UShr(s1, 63_u64), 1_u64)));
+  WriteZExt(dst, r32);
+  return memory;
+}
+
 template <typename D, typename S>
 DEF_SEM(MOVDQx, D dst, S src) {
   UWriteV128(dst, UReadV128(src));
@@ -503,6 +514,7 @@ IF_AVX(DEF_ISEL(VMOVLHPS_XMMdq_XMMq_XMMq) = VMOVLHPS;)
 IF_AVX(DEF_ISEL(VMOVLHPS_XMMdq_XMMdq_XMMdq) = VMOVLHPS;)
 
 DEF_ISEL(MOVMSKPS_GPR32_XMMps) = MOVMSKPS<R32W, V128>;
+DEF_ISEL(MOVMSKPD_GPR32_XMMpd) = MOVMSKPD<R32W, V128>;
 
 #if HAS_FEATURE_AVX
 #  if HAS_FEATURE_AVX512
