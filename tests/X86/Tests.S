@@ -34,10 +34,10 @@
 #else
 # define IF_NOT_APPLE_(...) __VA_ARGS__ ,
 #endif
-        
+
 #define FUNC_NAME(instr_name, num_args) \
     CAT3(instr_name, _, num_args)
-        
+
 /* Defines the beginning of a test function. The key detail is that tests
  * register themselves into data structures located in a special section of
  * the binary.
@@ -328,7 +328,6 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/ABI.S"
 #include "tests/X86/MMX/INPUTS.S"
 
-
 /* Change to `0` and put new `#include`s above when making new tests to speed
  * up compile and test times. */
 #if 1
@@ -349,6 +348,8 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/DATAXFER/MOVLPD.S"
 #include "tests/X86/DATAXFER/MOVLPS.S"
 #include "tests/X86/DATAXFER/MOVLHPS.S"
+#include "tests/X86/DATAXFER/MOVMSKPS.S"
+#include "tests/X86/DATAXFER/MOVMSKPD.S"
 #include "tests/X86/DATAXFER/MOVQ.S"
 #include "tests/X86/DATAXFER/MOVSD.S"
 #include "tests/X86/DATAXFER/MOVSS.S"
@@ -358,12 +359,14 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/DATAXFER/MOVZX.S"
 #include "tests/X86/DATAXFER/XCHG.S"
 #include "tests/X86/DATAXFER/KMOVW.S"
+#include "tests/X86/DATAXFER/LDDQU.S"
 
 /* Bring in the rest of the semantic tests. */
 
 #include "tests/X86/AVX/VINSERTF128.S"
 #include "tests/X86/AVX/VZEROUPPER.S"
 #include "tests/X86/AVX/VPBROADCASTB.S"
+#include "tests/X86/AVX/VMASKMOV.S"
 
 #include "tests/X86/BINARY/ADC.S"
 #include "tests/X86/BINARY/ADD.S"
@@ -509,9 +512,11 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/SHIFT/SHR.S"
 #include "tests/X86/SHIFT/SHRD.S"
 
+#include "tests/X86/SSE/ADDSUB.S"
 #include "tests/X86/SSE/CMPSS.S"
 #include "tests/X86/SSE/COMISD.S"
 #include "tests/X86/SSE/COMISS.S"
+#include "tests/X86/SSE/HADD.S"
 #include "tests/X86/SSE/PACKUSWB.S"
 #include "tests/X86/SSE/PCMPISTRI.S"
 #include "tests/X86/SSE/PSHUFD.S"
@@ -532,11 +537,15 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/SSE/UNPCKHPD.S"
 #include "tests/X86/SSE/UNPCKHPS.S"
 #include "tests/X86/SSE/MOVDDUP.S"
+#include "tests/X86/SSE/MOVSHDUP.S"
+#include "tests/X86/SSE/MOVSLDUP.S"
 #include "tests/X86/SSE/SQRTSS.S"
 #include "tests/X86/SSE/SQRTSD.S"
 #include "tests/X86/SSE/MXCSR.S"
 #include "tests/X86/SSE/SHUFPS.S"
 #include "tests/X86/SSE/SHUFPD.S"
+#include "tests/X86/SSE/PMOVSX.S"
+#include "tests/X86/SSE/PMOVZX.S"
 
 #include "tests/X86/STRINGOP/CMPS.S"
 #include "tests/X86/STRINGOP/LODS.S"
