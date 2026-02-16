@@ -172,6 +172,10 @@ SYMBOL(fpu_cwd):
     .long 0x37F  /* Default is 0x37F */
 
     .align 16
+SYMBOL(default_mxcsr):
+    .long 0x1F80  /* Default MXCSR: all exceptions masked, round to nearest */
+
+    .align 16
 SYMBOL(vec_data):
     .long 0x41414141, 0xabababab, 0xcdcdcdcd, 0xefefefef
     .long 0x29292929, 0x38383838, 0x47474747, 0x56565656
@@ -228,6 +232,9 @@ SYMBOL(DoInvokeTestCase):
     /* Ensure FPU is set to double extended precision */
     fldcw [RIP + SYMBOL(fpu_cwd)]
 
+    /* Reset MXCSR to a known default state so native and lifted paths agree. */
+    ldmxcsr [RIP + SYMBOL(default_mxcsr)]
+
     /* Set the bits of some of the vector regs to 1. This makes it easier to
      * detect certain zeroing behavior. */
     SET_VEC(0)
@@ -253,6 +260,10 @@ SYMBOL(DoInvokeTestCase):
 # define STATE_PTR SYMBOL(gLiftedState)
 # include "generated/Arch/X86/SaveState.S"
 # undef STATE_PTR
+
+    /* Reset FPU to a known state right before entering the test, since
+     * SaveState.S may have dirtied FPU state. */
+    fninit
 
     jmp QWORD PTR DS:[RIP + SYMBOL(gTestToRun)]
     .cfi_endproc
@@ -405,7 +416,13 @@ SYMBOL(__x86_test_table_begin):
 #include "tests/X86/BITBYTE/BTS.S"
 #include "tests/X86/BITBYTE/LZCNT.S"
 #include "tests/X86/BITBYTE/SETcc.S"
-#include "tests/X86/BITBYTE/TZCNT.S"
+
+#include "tests/X86/BMI/ANDN.S"
+#include "tests/X86/BMI/BEXTR.S"
+#include "tests/X86/BMI/BLSI.S"
+#include "tests/X86/BMI/BLSMSK.S"
+#include "tests/X86/BMI/BLSR.S"
+#include "tests/X86/BMI/TZCNT.S"
 
 #include "tests/X86/CMOV/CMOVB.S"
 #include "tests/X86/CMOV/CMOVBE.S"
