@@ -46,13 +46,20 @@ DEF_SEM(BEXTR, D dst, S1 src1, S2 src2) {
   // Extract length from bits [15:8]
   auto length = ZExtTo<S1>(UAnd(UShr(control, Literal<S2>(8)), Literal<S2>(0xFF)));
 
-  // Constrain start and length to operand size to avoid undefined behavior
-  start = URem(start, BitSizeOf(src1));
-  length = URem(length, BitSizeOf(src1));
+  auto bit_size = BitSizeOf(src1);
 
-  // Extract bits: (source >> start) & ((1 << length) - 1)
-  auto shifted = UShr(source, start);
-  auto mask = USub(UShl(Literal<S1>(1), length), Literal<S1>(1));
+  // If start >= operand size, shift produces 0
+  auto start_oob = UCmpGte(start, bit_size);
+  auto safe_start = URem(start, bit_size);
+  auto shifted = Select(start_oob, Literal<S1>(0), UShr(source, safe_start));
+
+  // If length >= operand size, mask is all ones; otherwise (1 << length) - 1
+  auto length_oob = UCmpGte(length, bit_size);
+  auto safe_length = URem(length, bit_size);
+  auto small_mask = USub(UShl(Literal<S1>(1), safe_length), Literal<S1>(1));
+  auto all_ones = USub(Literal<S1>(0), Literal<S1>(1));
+  auto mask = Select(length_oob, all_ones, small_mask);
+
   auto result = UAnd(shifted, mask);
 
   WriteZExt(dst, result);
