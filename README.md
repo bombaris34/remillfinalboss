@@ -1,4 +1,4 @@
-# Remill [![Slack Chat](http://slack.empirehacking.nyc/badge.svg)](https://slack.empirehacking.nyc/)
+# RemillFinalBoss - Remill but with BMI [![Slack Chat](http://slack.empirehacking.nyc/badge.svg)](https://slack.empirehacking.nyc/)
 
 <p align="center">
      <img src="docs/images/remill_logo.png" />
