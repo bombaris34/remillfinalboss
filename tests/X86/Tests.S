@@ -172,6 +172,10 @@ SYMBOL(fpu_cwd):
     .long 0x37F  /* Default is 0x37F */
 
     .align 16
+SYMBOL(default_mxcsr):
+    .long 0x1F80  /* Default MXCSR: all exceptions masked, round to nearest */
+
+    .align 16
 SYMBOL(vec_data):
     .long 0x41414141, 0xabababab, 0xcdcdcdcd, 0xefefefef
     .long 0x29292929, 0x38383838, 0x47474747, 0x56565656
@@ -227,6 +231,9 @@ SYMBOL(DoInvokeTestCase):
 
     /* Ensure FPU is set to double extended precision */
     fldcw [RIP + SYMBOL(fpu_cwd)]
+
+    /* Reset MXCSR to a known default state so native and lifted paths agree. */
+    ldmxcsr [RIP + SYMBOL(default_mxcsr)]
 
     /* Set the bits of some of the vector regs to 1. This makes it easier to
      * detect certain zeroing behavior. */
